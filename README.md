@@ -89,10 +89,10 @@ The tracker sends probe messages and measures the Round-Trip Time (RTT) to detec
 
 ### Probe Methods
 
-| Method | Description                                                                                                      |
-|--------|------------------------------------------------------------------------------------------------------------------|
-| **Delete** (Default) | Sends a "delete" request for a non-existent message ID.                                                          |
-| **Reaction** | Sends a reaction emoji to a non-existent message ID. In my tests, this method does not work with Android devices. |
+| Method | Description                                                                                                     |
+|--------|-----------------------------------------------------------------------------------------------------------------|
+| **Delete** (Default) | Sends a "delete" request for a non-existent message ID.                                                         |
+| **Reaction** | Sends a reaction emoji to a non-existent message ID. |
 
 ### Detection Logic
 
