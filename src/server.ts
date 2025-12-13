@@ -258,7 +258,15 @@ io.on('connection', (socket) => {
         id,
         platform: entry.platform
     }));
-    socket.emit('tracked-contacts', trackedContacts);
+
+    // Handle request to get tracked contacts (for page refresh)
+    socket.on('get-tracked-contacts', () => {
+        const trackedContacts = Array.from(trackers.entries()).map(([id, entry]) => ({
+            id,
+            platform: entry.platform
+        }));
+        socket.emit('tracked-contacts', trackedContacts);
+    });
 
     // Add contact - supports both WhatsApp and Signal
     socket.on('add-contact', async (data: string | { number: string; platform: Platform }) => {

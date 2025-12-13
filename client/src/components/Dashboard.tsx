@@ -150,6 +150,36 @@ export function Dashboard({ connectionState }: DashboardProps) {
             setProbeMethod(method);
         }
 
+        function onTrackedContacts(contacts: { id: string, platform: Platform }[]) {
+            setContacts(prev => {
+                const next = new Map(prev);
+                contacts.forEach(({ id, platform }) => {
+                    if (!next.has(id)) {
+                        // Extract display number from id
+                        let displayNumber = id;
+                        if (platform === 'signal') {
+                            displayNumber = id.replace('signal:', '');
+                        } else {
+                            // WhatsApp JID format: number@s.whatsapp.net
+                            displayNumber = id.split('@')[0];
+                        }
+                        next.set(id, {
+                            jid: id,
+                            displayNumber,
+                            contactName: displayNumber,
+                            data: [],
+                            devices: [],
+                            deviceCount: 0,
+                            presence: null,
+                            profilePic: null,
+                            platform
+                        });
+                    }
+                });
+                return next;
+            });
+        }
+
         socket.on('tracker-update', onTrackerUpdate);
         socket.on('profile-pic', onProfilePic);
         socket.on('contact-name', onContactName);
@@ -157,6 +187,10 @@ export function Dashboard({ connectionState }: DashboardProps) {
         socket.on('contact-removed', onContactRemoved);
         socket.on('error', onError);
         socket.on('probe-method', onProbeMethod);
+        socket.on('tracked-contacts', onTrackedContacts);
+
+        // Request tracked contacts after listeners are set up
+        socket.emit('get-tracked-contacts');
 
         return () => {
             socket.off('tracker-update', onTrackerUpdate);
@@ -166,6 +200,7 @@ export function Dashboard({ connectionState }: DashboardProps) {
             socket.off('contact-removed', onContactRemoved);
             socket.off('error', onError);
             socket.off('probe-method', onProbeMethod);
+            socket.off('tracked-contacts', onTrackedContacts);
         };
     }, []);
 
